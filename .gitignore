@@ -4,3 +4,5 @@ for-video/
 data/
 
 __pycache__/
+.venv/
+.ruff_cache/
