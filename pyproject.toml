@@ -6,7 +6,7 @@ authors = ["Václav Volhejn <vaclav.volhejn@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.11"
 pycocotools = "^2.0.7"
 pillow = "^10.1.0"
 tqdm = "^4.66.1"
