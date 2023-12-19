@@ -32,15 +32,26 @@ def save_cutouts_for_index(
             return
 
 
-def main(output_dir: Path, max_index: int, gcp_prefix: str | None = None):
+def main(
+    output_dir: Path,
+    max_index: int,
+    gcp_prefix: str | None = None,
+    parallel: bool = True,
+):
     output_dir.mkdir(exist_ok=True)
 
     f = functools.partial(
         save_cutouts_for_index, output_dir=output_dir, gcp_prefix=gcp_prefix
     )
 
-    with multiprocessing.Pool(8) as pool:
-        pool.map(f, tqdm.auto.trange(1, max_index + 1), chunksize=1)
+    indices = tqdm.auto.trange(1, max_index + 1)
+
+    if not parallel:
+        for i in indices:
+            f(i)
+    else:
+        with multiprocessing.Pool(8) as pool:
+            pool.map(f, indices, chunksize=1)
 
 
 if __name__ == "__main__":
@@ -48,6 +59,7 @@ if __name__ == "__main__":
     parser.add_argument("--output-dir", "-o", type=Path, required=True)
     parser.add_argument("--max-index", type=int, default=100)
     parser.add_argument("--gcp-prefix", type=str, default=None)
+    parser.add_argument("--no-parallel", action="store_false", dest="parallel")
     args = parser.parse_args()
 
     gcp_prefix = args.gcp_prefix
@@ -60,4 +72,9 @@ if __name__ == "__main__":
             print("gcp-prefix should end with a slash, adding automatically")
             gcp_prefix += "/"
 
-    main(output_dir=args.output_dir, max_index=args.max_index, gcp_prefix=gcp_prefix)
+    main(
+        output_dir=args.output_dir,
+        max_index=args.max_index,
+        gcp_prefix=gcp_prefix,
+        parallel=args.parallel,
+    )

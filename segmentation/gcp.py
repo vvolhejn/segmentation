@@ -8,11 +8,15 @@ credentials to use.
    has the required permissions. For this sample, you must have "storage.buckets.list".
 """
 from pathlib import Path
+import logging
+
 from google.cloud import storage
 from google.cloud.storage import Client, transfer_manager
 
 GCP_PROJECT_ID = "vv-segmentation"
 BUCKET_ID = "vv-segmentation"
+
+logger = logging.getLogger(__name__)
 
 
 def authenticate_implicit_with_adc():
@@ -81,17 +85,10 @@ def upload_many_blobs_with_transfer_manager(
 
 def upload_blob(source_file_name: str | Path, destination_blob_name: str):
     """Uploads a file to the bucket."""
-    # The ID of your GCS bucket
-    # bucket_name = "your-bucket-name"
-    # The path to your file to upload
-    # source_file_name = "local/path/to/file"
-    # The ID of your GCS object
-    # destination_blob_name = "storage-object-name"
-
     storage_client = storage.Client()
     bucket = storage_client.bucket(BUCKET_ID)
 
     blob = bucket.blob(destination_blob_name)
     blob.upload_from_filename(str(source_file_name))
 
-    print(f"File {source_file_name} uploaded to {destination_blob_name}.")
+    logger.debug(f"File {source_file_name} uploaded to {destination_blob_name}.")
