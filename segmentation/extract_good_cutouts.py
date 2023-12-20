@@ -3,6 +3,7 @@ import functools
 from pathlib import Path
 import multiprocessing
 import sys
+import re
 
 import tqdm.auto
 
@@ -10,14 +11,23 @@ from segmentation import gcp
 from segmentation.cutting import extract_cutouts
 
 
-def save_cutouts_for_index(
-    image_index: int,
+def get_image_index(filename: str) -> int:
+    match = re.match(r"sa_([0-9]+).*", filename)
+    if match is None:
+        raise ValueError(f"Could not extract image index from {filename}")
+    
+    return int(match.groups()[0])
+
+
+def save_cutouts_for_image(
+    image_path: Path,
     output_dir: Path,
     error_on_missing_file: bool = True,
     gcp_prefix: str | None = None,
 ):
     try:
-        for cutout_index, cutout in extract_cutouts(image_index):
+        for cutout_index, cutout in extract_cutouts(image_path):
+            image_index = get_image_index(image_path.name)
             filename = f"{image_index:08d}_{cutout_index:05d}.webp"
             cutout.save(output_dir / filename)
 
@@ -33,31 +43,32 @@ def save_cutouts_for_index(
 
 
 def main(
+    input_dir: Path,
     output_dir: Path,
-    max_index: int,
+    max_n_images: int,
     gcp_prefix: str | None = None,
     parallel: bool = True,
 ):
     output_dir.mkdir(exist_ok=True)
 
     f = functools.partial(
-        save_cutouts_for_index, output_dir=output_dir, gcp_prefix=gcp_prefix
+        save_cutouts_for_image, output_dir=output_dir, gcp_prefix=gcp_prefix
     )
-
-    indices = tqdm.auto.trange(1, max_index + 1)
+    image_paths = tqdm.auto.tqdm(sorted(input_dir.glob("sa_*.jpg"))[:max_n_images])
 
     if not parallel:
-        for i in indices:
-            f(i)
+        for path in image_paths:
+            f(path)
     else:
         with multiprocessing.Pool(8) as pool:
-            pool.map(f, indices, chunksize=1)
+            pool.map(f, image_paths, chunksize=1)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument("--input-dir", "-i", type=Path, required=True)
     parser.add_argument("--output-dir", "-o", type=Path, required=True)
-    parser.add_argument("--max-index", type=int, default=100)
+    parser.add_argument("--max-n-images", type=int, default=100)
     parser.add_argument("--gcp-prefix", type=str, default=None)
     parser.add_argument("--no-parallel", action="store_false", dest="parallel")
     args = parser.parse_args()
@@ -73,8 +84,9 @@ if __name__ == "__main__":
             gcp_prefix += "/"
 
     main(
+        input_dir=args.input_dir,
         output_dir=args.output_dir,
-        max_index=args.max_index,
+        max_n_images=args.max_n_images,
         gcp_prefix=gcp_prefix,
         parallel=args.parallel,
     )

@@ -17,10 +17,10 @@ Annotation = dict
 DATA_DIR = Path(__file__).parent.parent / "sa_000000"
 
 
-def load(image_index: int) -> tuple[ImageType, list[Annotation]]:
-    image = Image.open(DATA_DIR / f"sa_{image_index}.jpg")
+def load(image_path: Path) -> tuple[ImageType, list[Annotation]]:
+    image = Image.open(image_path)
 
-    with open(DATA_DIR / f"sa_{image_index}.json") as f:
+    with open(image_path.with_suffix(".json")) as f:
         data = json.load(f)
 
     return image, data["annotations"]
@@ -40,8 +40,8 @@ def is_good_cutout(image: ImageType) -> bool:
     return True
 
 
-def extract_cutouts(image_index: int) -> Iterator[tuple[int, ImageType]]:
-    image, annotations = load(image_index)
+def extract_cutouts(image_path: Path) -> Iterator[tuple[int, ImageType]]:
+    image, annotations = load(image_path)
 
     for i, annotation in enumerate(annotations):
         mask = pycocotools.mask.decode(annotation["segmentation"])
