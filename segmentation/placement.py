@@ -22,16 +22,21 @@ def show(image: ImageType | np.ndarray) -> None:
 
 
 def place_image(
-    background: ImageType, foreground: ImageType, position: tuple[int, int] = (0, 0)
+    background: ImageType,
+    foreground: ImageType,
+    position: tuple[int, int] = (0, 0),
+    allow_out_of_bounds: bool = False,
 ) -> ImageType | None:
     x, y = position
-    if x < 0 or y < 0:
-        raise ValueError("Position must be positive")
-    if (
-        x + foreground.width > background.width
-        or y + foreground.height > background.height
-    ):
-        raise ValueError("Foreground does not fit in the background")
+
+    if not allow_out_of_bounds:
+        if x < 0 or y < 0:
+            raise ValueError("Position must be positive")
+        if (
+            x + foreground.width > background.width
+            or y + foreground.height > background.height
+        ):
+            raise ValueError("Foreground does not fit in the background")
     background = background.copy()
     # paste respecting alpha
     background.alpha_composite(foreground, (x, y))

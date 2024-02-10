@@ -2,7 +2,9 @@ import argparse
 from pathlib import Path
 import subprocess
 
-FILE_LIST_URL = "https://scontent.fprg4-1.fna.fbcdn.net/m1/v/t6/An8MNcSV8eixKBYJ2kyw6sfPh-J9U4tH2BV7uPzibNa0pu4uHi6fyXdlbADVO4nfvsWpTwR8B0usCARHTz33cBQNrC0kWZsD1MbBWjw.txt?ccb=10-5&oh=00_AfC8bPvgvIxtx56j_bM_fKaZS1JyPGgRHoF41GqBAonIOg&oe=65A97418&_nc_sid=0fdd51"
+# This link itself is dynamic, copy it from https://ai.meta.com/datasets/segment-anything-downloads/ - the "Download text file" link
+# FILE_LIST_URL = "https://scontent.fprg4-1.fna.fbcdn.net/m1/v/t6/An8MNcSV8eixKBYJ2kyw6sfPh-J9U4tH2BV7uPzibNa0pu4uHi6fyXdlbADVO4nfvsWpTwR8B0usCARHTz33cBQNrC0kWZsD1MbBWjw.txt?ccb=10-5&oh=00_AfC8bPvgvIxtx56j_bM_fKaZS1JyPGgRHoF41GqBAonIOg&oe=65A97418&_nc_sid=0fdd51"
+FILE_LIST_URL = "https://scontent-zrh1-1.xx.fbcdn.net/m1/v/t6/An8MNcSV8eixKBYJ2kyw6sfPh-J9U4tH2BV7uPzibNa0pu4uHi6fyXdlbADVO4nfvsWpTwR8B0usCARHTz33cBQNrC0kWZsD1MbBWjw.txt?ccb=10-5&oh=00_AfAsj2Mj6QDSDwUQMp8OoZftiQtOa3fSh4jwf_W8MoRb2g&oe=65EF5398&_nc_sid=0fdd51"
 
 REPO_ROOT = Path(__file__).parents[1]
 SA_1B_DIR = REPO_ROOT / "data" / "sa_1b"
