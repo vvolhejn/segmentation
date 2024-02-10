@@ -14,8 +14,6 @@ import tqdm.auto
 
 Annotation = dict
 
-DATA_DIR = Path(__file__).parent.parent / "sa_000000"
-
 
 def load(image_path: Path) -> tuple[ImageType, list[Annotation]]:
     image = Image.open(image_path)

@@ -125,6 +125,7 @@ def propose_grid(
 
 
 def to_mask(image: np.ndarray | ImageType) -> np.ndarray:
+    """Returns a mask from the alpha channel as a boolean NumPy array (false = transparent)."""
     if isinstance(image, Image.Image):
         if image.mode == "L":
             return np.array(image) > 0
