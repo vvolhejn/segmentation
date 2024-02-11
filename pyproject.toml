@@ -16,6 +16,9 @@ google-cloud-storage = "^2.14.0"
 faiss-cpu = "^1.7.4"
 plotly = "^5.18.0"
 pandas = "^2.1.4"
+pydantic = "^2.6.1"
+bayesian-optimization = "^1.4.3"
+diskcache = "^5.6.3"
 
 
 [tool.poetry.group.dev.dependencies]
